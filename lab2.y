@@ -138,112 +138,6 @@ int yylex(){
 	char c;int i;
 	while((c=getchar())==' ');/*permitirme ignorar blancos*/
 //---------------------------------------
-//REGISTROS 
-	if(c=='E'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='A'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EAX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='B'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EBX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='C'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return ECX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='D'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EDX;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-//PALABRAS RESERVADAS DE FUNCIONES
-	if(c=='M'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='O'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='V'){
-				lexema[i]='\0';
-				return INC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-	if(c=='I'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='N'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='C'){
-				lexema[i]='\0';
-				return INC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-	if(c=='D'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='E'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='C'){
-				lexema[i]='\0';
-				return DEC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-
-
-	if(c=='M'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='U'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='L'){
-				lexema[i]='\0';
-				return MUC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
 
 
 	if(isdigit(c)){
@@ -289,7 +183,16 @@ int yylex(){
 		ungetc(c,stdin);
 		lexema[i++]='\0';
 //Meter las palabras reservadas de funciones aca
-        
+		//REGISTROS 
+		if(!strcmp(lexema,"asignar"))return EAX;
+		if(!strcmp(lexema,"asignar"))return EBX;
+		if(!strcmp(lexema,"asignar"))return ECX;
+		if(!strcmp(lexema,"asignar"))return EDX;
+		if(!strcmp(lexema,"asignar"))return MOV;
+        	//Instrucciones Hector Gomez
+		if(!strcmp(lexema,"incrementar"))return INC;
+        	if(!strcmp(lexema,"decrementar"))return DEC;
+        	if(!strcmp(lexema,"multiplicar"))return MUL;
 		//Instrucciones Paolo Patiño
 		if(strcmp(lexema,"dividir")){
             		return DIVISION;
