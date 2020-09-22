@@ -21,7 +21,7 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX INC DEC MUL
+%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX MOV INC DEC MUL
 %%
 listainst: listainst instr '\n' 
 		| instr '\n' 
@@ -181,8 +181,22 @@ int yylex(){
 		}
 		else ungetc(c,stdin);
 	}
-
-
+//PALABRAS RESERVADAS DE FUNCIONES
+	if(c=='M'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='O'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='V'){
+				lexema[i]='\0';
+				return INC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
 	if(c=='I'){
 		i=0;
 		lexema[i++]=c;
@@ -198,7 +212,6 @@ int yylex(){
 		}
 		else ungetc(c,stdin);
 	}
-//PALABRAS RESERVADAS DE FUNCIONES
 	if(c=='D'){
 		i=0;
 		lexema[i++]=c;
