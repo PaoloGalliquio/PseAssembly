@@ -21,7 +21,7 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO
+%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX INC DEC MUL
 %%
 
 
@@ -108,6 +108,101 @@ int yylex(){
 	char c;int i;
 	while((c=getchar())==' ');/*permitirme ignorar blancos*/
 //---------------------------------------
+//REGISTROS 
+	if(c=='E'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='A'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EAX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='B'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EBX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='C'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return ECX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='D'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EDX;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+
+
+	if(c=='I'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='N'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='C'){
+				lexema[i]='\0';
+				return INC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+//PALABRAS RESERVADAS DE FUNCIONES
+	if(c=='D'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='E'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='C'){
+				lexema[i]='\0';
+				return DEC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+
+
+	if(c=='M'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='U'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='L'){
+				lexema[i]='\0';
+				return MUC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+
+
 	if(isdigit(c)){
 		i=0;
 		do{
