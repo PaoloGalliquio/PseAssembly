@@ -24,18 +24,10 @@ char lexema[100];
 %token NUMBER ID CAMBIOLINEA
 %%
 
-listainst: listainst instr ';' | instr ';' ;
-instr :  asignacion        ;
-asignacion: ID {$$=localizaSimbolo(lexema,ID);} '=' expr   {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$2);};
-expr    : expr '+' term {$$=$1+$3;};
-expr    : expr '-' term  {$$=$1-$3;}  ;   
-expr    :  term     {$$=$1;}    ;  
-term    : term '*' factor  {$$=$1*$3;}
-        | factor {$$=$1;}
-        ;
-factor  : NUMBER {$$=localizaSimbolo(lexema,NUMBER);} {$$=$1;}
-        | '(' expr ')'  {$$=$2;}
-        ;
+
+Gramatica;
+
+
 %%
 void yyerror(char *s){
 	fprintf(stderr,"%s\n",s);
