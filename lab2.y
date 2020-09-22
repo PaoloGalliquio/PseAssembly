@@ -281,9 +281,6 @@ int yylex(){
 	}
 //----------------------------------------
     if(isalpha(c)){
-        if(c=='e'){
-            
-        }
 		i=0;
 		do{
 			lexema[i++]=c;
@@ -291,7 +288,19 @@ int yylex(){
 		}while(isalnum(c));
 		ungetc(c,stdin);
 		lexema[i++]='\0';
-		return ID;
+//Meter las palabras reservadas de funciones aca
+        
+		//Instrucciones Paolo Patiño
+		if(strcmp(lexema,"dividir")){
+            		return DIVISION;
+        	}
+        	if(strcmp(lexema,"conjuncion")){
+            		return OR;
+        	}
+        	if(strcmp(lexema,"disyuncion")){
+            		return AND;
+        	}
+//---------------------------------------------------
 
 	}
 	if(c=='\n'){
