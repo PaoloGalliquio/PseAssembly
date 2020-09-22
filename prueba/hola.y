@@ -21,12 +21,42 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX INC DEC MUL
+%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX MOV INC DEC MUL OR DIVISION AND
 %%
+listainst: listainst instr '\n' 
+		| instr '\n' 
+		;
+instr 	: asignacion 
+		| incrementar | decrementar     
+		;
 
-
-asignacion:         INC EAX ';' {printf("Se izo una op\n");};
-
+asignacion: MOV EAX {$$=localizaSimbolo(lexema,EAX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		;
+incrementar: INC EAX {$$= $2+1;}
+		| INC EBX {$$= $2+1;}
+		| INC ECX {$$= $2+1;}
+		| INC EDX {$$= $2+1;}
+		;
+decrementar: DEC EAX {$$= $2-1;}
+		| DEC EBX  {$$= $2-1;}
+		| DEC ECX  {$$= $2-1;}
+		| DEC EDX  {$$= $2-1;}
+		;
 
 %%
 void yyerror(char *s){
@@ -38,7 +68,7 @@ int localizaSimbolo(char *nom,int token){
 	int i, longitud;
     double suma=0.0;
 	for(i=0;i<nSim;i++){
-		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcmp(tablaSimbolos[nSim].nombre,nom);*/
+		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){
 				return i;
 		}
 	}
@@ -46,12 +76,12 @@ int localizaSimbolo(char *nom,int token){
 	tablaSimbolos[nSim].token=token;
 //Asignacion de valor decimal
 	if(token==NUMERODECIMAL){
-        if(isdigit(lexema[strlen(lexema)]))
+        if(isdigit(lexema[strlen(lexema)-1]))
 		    suma=atof(lexema);
         else{
             longitud=strlen(lexema)-2;
             for(int j=0; j<=longitud; j++){
-                suma=suma+(atof(lexema[j]))*10^(longitud-j);
+                suma=suma+(atof(lexema[j]))*pow(10,(longitud-j));
             }
         }
 	}
@@ -60,13 +90,13 @@ int localizaSimbolo(char *nom,int token){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
             if(isdigit(lexema[j])){
-                suma=suma+(atof(lexema[j])*16^(longitud-j);
+                suma=suma+(atof(lexema[j])*pow(16,(longitud-j)));
             }
             if(lexema[j]>='a'&&lexema[j]<='f'){
-                suma=suma+((int)(lexema[j])-87)*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-87)*pow(16,(longitud-j));
             }
             if(lexema[j]>='A' && lexema[j]<='F'){
-                suma=suma+((int)(lexema[j])-55)*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-55)*pow(16,(longitud-j));
             }
         }
 	}
@@ -74,14 +104,14 @@ int localizaSimbolo(char *nom,int token){
     if(token==NUMEROOCTAL){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*8^(longitud-j);
+            suma=suma+(atof(lexema[j]))*pow(8,(longitud-j));
         }
 	}
 //Asignacion de valor binario
     if(token==NUMEROBINARIO){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*2^(longitud-j);
+            suma=suma+(atof(lexema[j]))*pow(2,(longitud-j));
         }
 	}
 //Sin asignacion de valor numerico inicial
@@ -151,8 +181,22 @@ int yylex(){
 		}
 		else ungetc(c,stdin);
 	}
-
-
+//PALABRAS RESERVADAS DE FUNCIONES
+	if(c=='M'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='O'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='V'){
+				lexema[i]='\0';
+				return INC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
 	if(c=='I'){
 		i=0;
 		lexema[i++]=c;
@@ -168,7 +212,6 @@ int yylex(){
 		}
 		else ungetc(c,stdin);
 	}
-//PALABRAS RESERVADAS DE FUNCIONES
 	if(c=='D'){
 		i=0;
 		lexema[i++]=c;
@@ -195,7 +238,7 @@ int yylex(){
 			c=getchar();
 			if(c=='L'){
 				lexema[i]='\0';
-				return MUC;
+				return MUL;
 			}
 			else ungetc(c,stdin);
 		}
@@ -216,31 +259,32 @@ int yylex(){
             for(int j=0;j<i;j++){
                 if(!isdigit(lexema[j])) return;
                 else return NUMERODECIMAL;
+            }
         }
 //NUMEROHEXADECIMAL
 		if(lexema[--i]=='h'||lexema[--i]=='H'){
             for(int j=0;j<(i-2);j++){
                 if((isdigit(lexema[j])) || (lexema[j]>='a'&&lexema[j]<='f') || (lexema[j]>='A' && lexema[j]<='F')) return NUMEROHEXADECIMAL;
                 else return;
+            }
         }
 //NUMEROOCTAL
 		if(lexema[--i]=='q'||lexema[--i]=='Q' ||lexema[--i]=='o' ||lexema[--i]=='O'){
             for(int j=0;j<(i-2);j++){
                 if(lexema[j]>='0' && lexema[j]<='8') return NUMEROOCTAL;
                 else return;
+            }
         }
 //NUMEROBINARIO
 		if(lexema[--i]=='b'||lexema[--i]=='B'){
             for(int j=0;j<(i-2);j++){
                 if(lexema[j]=='0' || lexema[j]=='1') return NUMEROBINARIO;
                 else return;
+            }
         }
 	}
 //----------------------------------------
     if(isalpha(c)){
-        if(c=='e'){
-            
-        }
 		i=0;
 		do{
 			lexema[i++]=c;
@@ -248,7 +292,19 @@ int yylex(){
 		}while(isalnum(c));
 		ungetc(c,stdin);
 		lexema[i++]='\0';
-		return ID;
+//Meter las palabras reservadas de funciones aca
+        
+		//Instrucciones Paolo Patiño
+		if(strcmp(lexema,"dividir")){
+    		return DIVISION;
+    	}
+    	if(strcmp(lexema,"conjuncion")){
+    		return OR;
+    	}
+    	if(strcmp(lexema,"disyuncion")){
+    		return AND;
+    	}
+//---------------------------------------------------
 
 	}
 	if(c=='\n'){

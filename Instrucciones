@@ -1,0 +1,9 @@
+Para crear un .out
+
+yacc file.y
+(se crea y.tab.c)
+gcc y.tab.c -lm -lfl
+(se crea a.out)
+./a.out
+==
+yacc file.y && gcc y.tab.c -lm -lfl && ./a.out
