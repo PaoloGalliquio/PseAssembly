@@ -21,7 +21,7 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMBER ID CAMBIOLINEA
+%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO
 %%
 
 
@@ -88,7 +88,7 @@ int localizaSimbolo(char *nom,int token){
 	else{
 		suma=0.0;
 	}
-    tablaSimbolos[nSim].calor=suma;
+    tablaSimbolos[nSim].valor=suma;
 	nSim++;
 	return nSim-1;
 
