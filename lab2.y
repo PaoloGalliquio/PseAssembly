@@ -60,13 +60,13 @@ int localizaSimbolo(char *nom,int token){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
             if(isdigit(lexema[j])){
-                suma=suma+(atof(lexema[j]))*16^(longitud-j);
+                suma=suma+(atof(lexema[j])*16^(longitud-j);
             }
             if(lexema[j]>='a'&&lexema[j]<='f'){
-                suma=suma+(atof(lexema[j]))*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-87)*16^(longitud-j);
             }
             if(lexema[j]>='A' && lexema[j]<='F'){
-                suma=suma+(atof(lexema[j]))*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-55)*16^(longitud-j);
             }
         }
 	}
