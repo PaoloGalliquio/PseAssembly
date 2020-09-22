@@ -23,10 +23,40 @@ char lexema[100];
 %}
 %token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX INC DEC MUL
 %%
+listainst: listainst instr '\n' 
+		| instr '\n' 
+		;
+instr 	: asignacion 
+		| incrementar | decrementar     
+		;
 
-
-Gramatica;
-
+asignacion: MOV EAX {$$=localizaSimbolo(lexema,EAX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EBX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV ECX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		| MOV EDX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+		;
+incrementar: INC EAX {$$= $2+1;}
+		| INC EBX {$$= $2+1;}
+		| INC ECX {$$= $2+1;}
+		| INC EDX {$$= $2+1;}
+		;
+decrementar: DEC EAX {$$= $2-1;}
+		| DEC EBX  {$$= $2-1;}
+		| DEC ECX  {$$= $2-1;}
+		| DEC EDX  {$$= $2-1;}
+		;
 
 %%
 void yyerror(char *s){
