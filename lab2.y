@@ -21,7 +21,7 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX MOV INC DEC MUL
+%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX MOV INC DEC MUL OR DIVISION AND
 %%
 listainst: listainst instr '\n' 
 		| instr '\n' 
@@ -68,7 +68,7 @@ int localizaSimbolo(char *nom,int token){
 	int i, longitud;
     double suma=0.0;
 	for(i=0;i<nSim;i++){
-		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcmp(tablaSimbolos[nSim].nombre,nom);*/
+		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){
 				return i;
 		}
 	}
@@ -76,12 +76,12 @@ int localizaSimbolo(char *nom,int token){
 	tablaSimbolos[nSim].token=token;
 //Asignacion de valor decimal
 	if(token==NUMERODECIMAL){
-        if(isdigit(lexema[strlen(lexema)]))
+        if(isdigit(lexema[strlen(lexema)-1]))
 		    suma=atof(lexema);
         else{
             longitud=strlen(lexema)-2;
             for(int j=0; j<=longitud; j++){
-                suma=suma+(atof(lexema[j]))*10^(longitud-j);
+                suma=suma+(atof(lexema[j]))*pow(10,(longitud-j));
             }
         }
 	}
@@ -90,13 +90,13 @@ int localizaSimbolo(char *nom,int token){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
             if(isdigit(lexema[j])){
-                suma=suma+(atof(lexema[j])*16^(longitud-j);
+                suma=suma+(atof(lexema[j])*pow(16,(longitud-j)));
             }
             if(lexema[j]>='a'&&lexema[j]<='f'){
-                suma=suma+((int)(lexema[j])-87)*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-87)*pow(16,(longitud-j));
             }
             if(lexema[j]>='A' && lexema[j]<='F'){
-                suma=suma+((int)(lexema[j])-55)*16^(longitud-j);
+                suma=suma+((int)(lexema[j])-55)*pow(16,(longitud-j));
             }
         }
 	}
@@ -104,14 +104,14 @@ int localizaSimbolo(char *nom,int token){
     if(token==NUMEROOCTAL){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*8^(longitud-j);
+            suma=suma+(atof(lexema[j]))*pow(8,(longitud-j));
         }
 	}
 //Asignacion de valor binario
     if(token==NUMEROBINARIO){
 		longitud=strlen(lexema)-2;
         for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*2^(longitud-j);
+            suma=suma+(atof(lexema[j]))*pow(2,(longitud-j));
         }
 	}
 //Sin asignacion de valor numerico inicial
@@ -138,6 +138,112 @@ int yylex(){
 	char c;int i;
 	while((c=getchar())==' ');/*permitirme ignorar blancos*/
 //---------------------------------------
+//REGISTROS 
+	if(c=='E'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='A'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EAX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='B'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EBX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='C'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return ECX;
+			}
+			else ungetc(c,stdin);
+		}
+		else if(c=='D'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='X'){
+				lexema[i]='\0';
+				return EDX;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+//PALABRAS RESERVADAS DE FUNCIONES
+	if(c=='M'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='O'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='V'){
+				lexema[i]='\0';
+				return INC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+	if(c=='I'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='N'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='C'){
+				lexema[i]='\0';
+				return INC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+	if(c=='D'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='E'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='C'){
+				lexema[i]='\0';
+				return DEC;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
+
+
+	if(c=='M'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='U'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='L'){
+				lexema[i]='\0';
+				return MUL;
+			}
+			else ungetc(c,stdin);
+		}
+		else ungetc(c,stdin);
+	}
 
 
 	if(isdigit(c)){
@@ -153,24 +259,28 @@ int yylex(){
             for(int j=0;j<i;j++){
                 if(!isdigit(lexema[j])) return;
                 else return NUMERODECIMAL;
+            }
         }
 //NUMEROHEXADECIMAL
 		if(lexema[--i]=='h'||lexema[--i]=='H'){
             for(int j=0;j<(i-2);j++){
                 if((isdigit(lexema[j])) || (lexema[j]>='a'&&lexema[j]<='f') || (lexema[j]>='A' && lexema[j]<='F')) return NUMEROHEXADECIMAL;
                 else return;
+            }
         }
 //NUMEROOCTAL
 		if(lexema[--i]=='q'||lexema[--i]=='Q' ||lexema[--i]=='o' ||lexema[--i]=='O'){
             for(int j=0;j<(i-2);j++){
                 if(lexema[j]>='0' && lexema[j]<='8') return NUMEROOCTAL;
                 else return;
+            }
         }
 //NUMEROBINARIO
 		if(lexema[--i]=='b'||lexema[--i]=='B'){
             for(int j=0;j<(i-2);j++){
                 if(lexema[j]=='0' || lexema[j]=='1') return NUMEROBINARIO;
                 else return;
+            }
         }
 	}
 //----------------------------------------
@@ -183,26 +293,17 @@ int yylex(){
 		ungetc(c,stdin);
 		lexema[i++]='\0';
 //Meter las palabras reservadas de funciones aca
-		//REGISTROS 
-		if(!strcmp(lexema,"asignar"))return EAX;
-		if(!strcmp(lexema,"asignar"))return EBX;
-		if(!strcmp(lexema,"asignar"))return ECX;
-		if(!strcmp(lexema,"asignar"))return EDX;
-		if(!strcmp(lexema,"asignar"))return MOV;
-        	//Instrucciones Hector Gomez
-		if(!strcmp(lexema,"incrementar"))return INC;
-        	if(!strcmp(lexema,"decrementar"))return DEC;
-        	if(!strcmp(lexema,"multiplicar"))return MUL;
+        
 		//Instrucciones Paolo Patiño
 		if(strcmp(lexema,"dividir")){
-            		return DIVISION;
-        	}
-        	if(strcmp(lexema,"conjuncion")){
-            		return OR;
-        	}
-        	if(strcmp(lexema,"disyuncion")){
-            		return AND;
-        	}
+    		return DIVISION;
+    	}
+    	if(strcmp(lexema,"conjuncion")){
+    		return OR;
+    	}
+    	if(strcmp(lexema,"disyuncion")){
+    		return AND;
+    	}
 //---------------------------------------------------
 
 	}
@@ -221,4 +322,6 @@ int main(){
 		printf("cadena inválida\n");	
 	}
 }
+
+
 
