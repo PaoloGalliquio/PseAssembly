@@ -69,11 +69,13 @@
 #include<math.h>
 #include<string.h>
 #include<ctype.h>
+
 /*prototipos de funcion*/
 int yylex();
 void yyerror(char *s);
 int localizaSimbolo(char *nom,int token);
 void imprimeTablaSimbolos();
+
 /*estructuras*/
 typedef struct{
 	char nombre[100];    
@@ -82,11 +84,13 @@ typedef struct{
 	double valor;        
 }TipoTS;
 TipoTS tablaSimbolos[100];
+
 /*variables*/
 int nSim=0;
 char lexema[100];
 
-#line 90 "y.tab.c" /* yacc.c:339  */
+
+#line 94 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -119,14 +123,22 @@ extern int yydebug;
   enum yytokentype
   {
     NUMBER = 258,
-    ID = 259,
-    CAMBIOLINEA = 260
+    MEMO = 259,
+    REG = 260,
+    NEG = 261,
+    EXCL = 262,
+    COMP = 263,
+    ID = 264
   };
 #endif
 /* Tokens.  */
 #define NUMBER 258
-#define ID 259
-#define CAMBIOLINEA 260
+#define MEMO 259
+#define REG 260
+#define NEG 261
+#define EXCL 262
+#define COMP 263
+#define ID 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -144,7 +156,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 148 "y.tab.c" /* yacc.c:358  */
+#line 160 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -384,23 +396,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  5
+#define YYFINAL  16
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   6
+#define YYLAST   17
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  7
+#define YYNTOKENS  11
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  3
+#define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  4
+#define YYNRULES  21
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  9
+#define YYNSTATES  32
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   260
+#define YYMAXUTOK   264
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -413,7 +425,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     6,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    10,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -435,14 +447,16 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5
+       5,     6,     7,     8,     9
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    26,    26,    26,    28
+       0,    31,    31,    33,    35,    37,    39,    42,    42,    42,
+      42,    44,    44,    47,    47,    47,    50,    50,    53,    53,
+      53,    53
 };
 #endif
 
@@ -451,8 +465,10 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NUMBER", "ID", "CAMBIOLINEA", "','",
-  "$accept", "final", "assembler", YY_NULLPTR
+  "$end", "error", "$undefined", "NUMBER", "MEMO", "REG", "NEG", "EXCL",
+  "COMP", "ID", "','", "$accept", "final", "instruccion", "assembler",
+  "@1", "@2", "@3", "@4", "negacion", "@5", "@6", "exclusividad", "@7",
+  "comparacion", "@8", "@9", "@10", YY_NULLPTR
 };
 #endif
 
@@ -461,16 +477,17 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,    44
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+      44
 };
 # endif
 
-#define YYPACT_NINF -5
+#define YYPACT_NINF -7
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-5)))
+  (!!((Yystate) == (-7)))
 
-#define YYTABLE_NINF -1
+#define YYTABLE_NINF -12
 
 #define yytable_value_is_error(Yytable_value) \
   0
@@ -479,7 +496,10 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -4,    -2,     2,    -1,    -3,    -5,    -5,     3,    -5
+      -6,    -7,    -7,    -7,    -1,     5,    -7,    -7,    -7,    -7,
+      -7,     1,    -7,     2,     6,     3,    -7,    -7,    -7,    -7,
+       0,    -7,     4,     7,     8,    10,     9,    -7,    -7,    -7,
+      -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -487,51 +507,65 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       3,     0,     0,     0,     0,     1,     2,     0,     4
+       0,    13,    16,    18,     7,     0,     2,     3,     4,     5,
+       6,     0,    17,     0,     0,     0,     1,    14,    19,     8,
+       0,    15,     0,     0,     0,     0,     0,    12,    20,     9,
+      21,    10
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -5,    -5,    -5
+      -7,    -7,    -7,    -7,    -7,    -7,    -7,    -7,    -7,    -7,
+      -7,    -7,    -7,    -7,    -7,    -7,    -7
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3
+      -1,     5,     6,     7,    14,    23,    31,    15,     8,    11,
+      21,     9,    12,    10,    13,    22,    30
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule whose
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_uint8 yytable[] =
+static const yytype_int8 yytable[] =
 {
-       1,     4,     5,     7,     6,     0,     8
+       1,     2,     3,     4,   -11,    16,    17,    18,    20,    19,
+      24,    27,    29,     0,    25,    28,     0,    26
 };
 
 static const yytype_int8 yycheck[] =
 {
-       4,     3,     0,     6,     5,    -1,     3
+       6,     7,     8,     9,     5,     0,     5,     5,     5,     3,
+      10,     3,     3,    -1,    10,     5,    -1,    10
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,     8,     9,     3,     0,     5,     6,     3
+       0,     6,     7,     8,     9,    12,    13,    14,    19,    22,
+      24,    20,    23,    25,    15,    18,     0,     5,     5,     3,
+       5,    21,    26,    16,    10,    10,    10,     3,     5,     3,
+      27,    17
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,     7,     8,     8,     9
+       0,    11,    12,    13,    13,    13,    13,    15,    16,    17,
+      14,    18,    14,    20,    21,    19,    23,    22,    25,    26,
+      27,    24
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     0,     4
+       0,     2,     1,     1,     1,     1,     1,     0,     0,     0,
+       7,     0,     5,     0,     0,     4,     0,     2,     0,     0,
+       0,     7
 };
 
 
@@ -1207,20 +1241,122 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 26 "MiVersion.y" /* yacc.c:1646  */
-    {printf("FINAL\n");}
-#line 1214 "y.tab.c" /* yacc.c:1646  */
+        case 3:
+#line 33 "MiVersion.y" /* yacc.c:1646  */
+    {printf("FINAL DE INSTRUCCION\n");}
+#line 1248 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 28 "MiVersion.y" /* yacc.c:1646  */
+#line 35 "MiVersion.y" /* yacc.c:1646  */
+    {printf("FINAL DE INSTRUCCION\n");}
+#line 1254 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 37 "MiVersion.y" /* yacc.c:1646  */
+    {printf("FINAL DE INSTRUCCION\n");}
+#line 1260 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 39 "MiVersion.y" /* yacc.c:1646  */
+    {printf("FINAL DE INSTRUCCION\n");}
+#line 1266 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 42 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,ID);}
+#line 1272 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 42 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,NUMBER);}
+#line 1278 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 42 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,NUMBER);}
+#line 1284 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 42 "MiVersion.y" /* yacc.c:1646  */
     {printf("Operacion en assembler\n");}
-#line 1220 "y.tab.c" /* yacc.c:1646  */
+#line 1290 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 44 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,ID);}
+#line 1296 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 12:
+#line 44 "MiVersion.y" /* yacc.c:1646  */
+    {printf("Operacion entre registro y numero\n");}
+#line 1302 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 47 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,NEG);}
+#line 1308 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 14:
+#line 47 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,REG);}
+#line 1314 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 47 "MiVersion.y" /* yacc.c:1646  */
+    {printf("Negacion de un registro\n");}
+#line 1320 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 50 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,EXCL);}
+#line 1326 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 50 "MiVersion.y" /* yacc.c:1646  */
+    {printf("XOR entre 2 registros\n");}
+#line 1332 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 53 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,COMP);}
+#line 1338 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 53 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,REG);}
+#line 1344 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 53 "MiVersion.y" /* yacc.c:1646  */
+    {(yyval)=localizaSimbolo(lexema,REG);}
+#line 1350 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 21:
+#line 53 "MiVersion.y" /* yacc.c:1646  */
+    {printf("Comparacion entre 2 registros\n");}
+#line 1356 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1224 "y.tab.c" /* yacc.c:1646  */
+#line 1360 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1448,7 +1584,8 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 29 "MiVersion.y" /* yacc.c:1906  */
+#line 57 "MiVersion.y" /* yacc.c:1906  */
+
 
 void yyerror(char *s){
 	fprintf(stderr,"%s\n",s);
@@ -1458,7 +1595,7 @@ void yyerror(char *s){
 int localizaSimbolo(char *nom,int token){
 	int i;
 	for(i=0;i<nSim;i++){
-		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcmp(tablaSimbolos[nSim].nombre,nom);*/
+		if(!strcmp(tablaSimbolos[nSim].nombre,nom)){
 				return i;
 		}
 	}
@@ -1485,11 +1622,113 @@ void imprimeTablaSimbolos(){
 
 }
 
-int yylex(){
-	char c;int i;
-	while((c=getchar())==' ');   /*permitirme ignorar blancos*/
-	if (c=='\n') return CAMBIOLINEA;
-	
+int yylex(){ char c;int i; while((c=getchar())==' ');   /*permitirme ignorar
+blancos*/ /*	 if (c=='\n'){ //ungetc(c,stdin); return CAMBIOLINEA; }*/
+
+    //REGISTROS 
+	if(c=='e'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='a'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='x'){
+                lexema[i++]=c; 
+				lexema[i]='\0';
+				return REG;
+			}
+			else ungetc(c,stdin);
+			
+		}
+		else if(c=='b'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='x'){
+                lexema[i++]=c; 
+				lexema[i]='\0';
+				return REG;
+				
+			}
+			else ungetc(c,stdin);
+			
+		}
+		else if(c=='c'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='x'){
+                lexema[i++]=c; 
+				lexema[i]='\0';
+				return REG;
+				
+			}
+			else ungetc(c,stdin);
+			
+		}
+		else if(c=='d'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='x'){
+                lexema[i++]=c; 
+				lexema[i]='\0';
+				return REG;
+
+			}
+			else ungetc(c,stdin);
+			
+		}
+		else ungetc(c,stdin);
+		
+	}
+
+    //PALABRAS RESERVADAS DE FUNCIONES
+	if(c=='E'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='X'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='C'){
+                lexema[i++]=c;
+                c=getchar();
+                if(c=='L'){
+                    lexema[i++]=c;       
+				    lexema[i]='\0';
+				    return EXCL;
+				    
+                }
+                else ungetc(c,stdin);
+                
+			}
+			else ungetc(c,stdin);
+			
+		}
+		else ungetc(c,stdin);
+		
+	}
+    
+	if(c=='n'){
+		i=0;
+		lexema[i++]=c;
+		c=getchar();
+		if(c=='e'){
+			lexema[i++]=c;
+			c=getchar();
+			if(c=='g'){     
+                lexema[i++]=c;   
+			    lexema[i]='\0';
+			    return NEG;
+            }
+            else ungetc(c,stdin);
+            
+		}
+		else ungetc(c,stdin);
+		
+	}
+    
+
+//-----------------------------------------------------
     if(isalpha(c)){
 		i=0;
 		do{
@@ -1521,7 +1760,7 @@ int yylex(){
 int main(){
 	if(!yyparse()){
 		printf("cadena válida\n");
-		//imprimeTablaSimbolos();
+		imprimeTablaSimbolos();
 	}
 	else{
 		printf("cadena inválida\n");	
