@@ -21,16 +21,13 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token ID NUMBER EAX EBX ECX EDX INC DEC MOV MUL NUMERODECIMAL NUMEROOCTAL NUMEROHEXADECIMAL NUMEROBINARIO
+%token ID NUMBER EAX EBX ECX EDX INC DEC MOV MUL
 %%
 final: incrementar {printf("FINAL\n");}
 	| decrementar {printf("FINAL\n");}
 	| asignar {printf("FINAL\n");}
-    | prueba {printf("FINAL\n");imprimeTablaSimbolos();}
 	;
 
-prueba: NUMERODECIMAL {localizaSimbolo(lexema,NUMERODECIMAL);} NUMEROOCTAL {localizaSimbolo(lexema,NUMEROOCTAL);$$=$2;}
-      ;
 incrementar: INC EAX {$$= $2+1;}
 		| INC EBX {$$= $2+1;}
 		| INC ECX {$$= $2+1;}
@@ -65,61 +62,20 @@ void yyerror(char *s){
 
 
 int localizaSimbolo(char *nom,int token){
-	int i, longitud=0;
-    double suma=0;
+	int i;
 	for(i=0;i<nSim;i++){
-		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcasecmp(tablaSimbolos[nSim].nombre,nom);*/
+		if(!strcmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcasecmp(tablaSimbolos[nSim].nombre,nom);*/
 				return i;
 		}
 	}
 	strcpy(tablaSimbolos[nSim].nombre,nom);
 	tablaSimbolos[nSim].token=token;
-	//Asignacion de valor decimal
-	if(token==NUMERODECIMAL){
-        if(isdigit(lexema[strlen(lexema)-1])){
-		    suma=atof(lexema);
-        }
-        else{
-            longitud=strlen(lexema)-2;
-            for(int j=0; j<=longitud; j++){
-                suma=suma+((int)(lexema[j]-'0'))*pow(10,(longitud-j));
-            }
-        }
+	if(token==NUMBER){
+		tablaSimbolos[nSim].valor=atof(lexema);
 	}
-//Asignacion de valor hexadecimal
-    else if(token==NUMEROHEXADECIMAL){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            if(isdigit(lexema[j])){
-                suma=suma+((int)(lexema[j]-'0'))*pow(16,(longitud-j));
-            }
-            if(lexema[j]>='a'&&lexema[j]<='f'){
-                suma=suma+((int)(lexema[j])-87)*pow(16,(longitud-j));
-            }
-            if(lexema[j]>='A' && lexema[j]<='F'){
-                suma=suma+((int)(lexema[j])-55)*pow(16,(longitud-j));
-            }
-        }
-	}
-//Asignacion de valor octal
-    else if(token==NUMEROOCTAL){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            suma=suma+((int)(lexema[j]-'0'))*pow(8,(longitud-j));
-        }
-	}
-//Asignacion de valor binario
-    else if(token==NUMEROBINARIO){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            suma=suma+((int)(lexema[j]-'0'))*pow(2,(longitud-j));
-        }
-	}
-//Sin asignacion de valor numerico inicial
 	else{
-		suma=0.0;
+		tablaSimbolos[nSim].valor=0.0;
 	}
-    tablaSimbolos[nSim].valor=suma;
 	nSim++;
 	return nSim-1;
 
@@ -155,47 +111,20 @@ int yylex(){
        		if(!strcmp(lexema,"incrementar"))	return INC;
     		if(!strcmp(lexema,"decrementar"))	return DEC;
 		if(!strcmp(lexema,"multiplicar"))	return MUL;
-        //NUMEROHEXADECIMAL
-		if(lexema[i-2]=='h'|| lexema[i-2]=='H'){
-            for(int j=0;j<(i-2);j++){
-                if((isdigit(lexema[j])) || (lexema[j]>='a'&&lexema[j]<='f') || (lexema[j]>='A' && lexema[j]<='F')) return NUMEROHEXADECIMAL;
-                else return 0;
-            }
-        }
 //---------------------------------------------------
 		return ID;
 	}
-	if(isdigit(c)){
+	if(isdigit(c)){ 
+		//scanf("%d",&yylval);
 		i=0;
 		do{
 			lexema[i++]=c;
 			c=getchar();
-		}while(isalnum(c));
+		}while(isdigit(c));
 		ungetc(c,stdin);
 		lexema[i++]='\0';
-//NUMERODECIMAL
-		if(lexema[i-2]=='d'|| lexema[i-2]=='D'|| isdigit(lexema[i-2])){
-            for(int j=0;j<i-2;j++){
-                if(!isdigit(lexema[j])) return 0;
-                else return NUMERODECIMAL;
-            }
-        }
-//NUMEROOCTAL
-		if(lexema[i-2]=='q'|| lexema[i-2]=='Q' || lexema[i-2]=='o' || lexema[i-2]=='O'){
-            for(int j=0;j<(i-2);j++){
-                if(lexema[j]>='0' && lexema[j]<='8') return NUMEROOCTAL;
-                else return 0;
-            }
-        }
-//NUMEROBINARIO
-		if(lexema[i-2]=='b'||lexema[i-2]=='B'){
-            for(int j=0;j<(i-2);j++){
-                if(lexema[j]=='0' || lexema[j]=='1') return NUMEROBINARIO;
-                else return 0;
-            }
-	    }
-    }
-
+		return NUMBER;
+	}
 	if(c=='\n'){
 		return 0;
 	}
@@ -205,10 +134,9 @@ int yylex(){
 int main(){
 	if(!yyparse()){
 		printf("cadena válida\n");
-		imprimeTablaSimbolos();
+		//imprimeTablaSimbolos();
 	}
 	else{
 		printf("cadena inválida\n");	
 	}
 }
-
