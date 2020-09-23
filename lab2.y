@@ -21,32 +21,13 @@ TipoTS tablaSimbolos[100];
 int nSim=0;
 char lexema[100];
 %}
-%token NUMERODECIMAL NUMEROHEXADECIMAL NUMEROOCTAL NUMEROBINARIO EAX EBX ECX EDX MOV INC DEC MUL OR DIVISION AND
+%token ID NUMBER CAMBIOLINEA EAX EBX ECX EDX INC DEC MOV MUL
 %%
-listainst: listainst instr '\n' 
-		| instr '\n' 
-		;
-instr 	: asignacion 
-		| incrementar | decrementar     
-		;
+final: incrementar CAMBIOLINEA {printf("FINAL\n");}
+	| decrementar CAMBIOLINEA {printf("FINAL\n");}
+	| asignar CAMBIOLINEA {printf("FINAL\n");}
+	;
 
-asignacion: MOV EAX {$$=localizaSimbolo(lexema,EAX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EAX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EBX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV ECX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EDX {$$=localizaSimbolo(lexema,EDX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		| MOV EDX {$$=localizaSimbolo(lexema,EAX);} NUMERODECIMAL {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
-		;
 incrementar: INC EAX {$$= $2+1;}
 		| INC EBX {$$= $2+1;}
 		| INC ECX {$$= $2+1;}
@@ -57,7 +38,23 @@ decrementar: DEC EAX {$$= $2-1;}
 		| DEC ECX  {$$= $2-1;}
 		| DEC EDX  {$$= $2-1;}
 		;
-
+asignar: MOV EAX {$$=localizaSimbolo(lexema,EAX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EAX {$$=localizaSimbolo(lexema,EAX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EAX {$$=localizaSimbolo(lexema,EAX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EAX {$$=localizaSimbolo(lexema,EAX);} NUMBER {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EBX {$$=localizaSimbolo(lexema,EBX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EBX {$$=localizaSimbolo(lexema,EBX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EBX {$$=localizaSimbolo(lexema,EBX);} NUMBER {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV ECX {$$=localizaSimbolo(lexema,ECX);} EDX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV ECX {$$=localizaSimbolo(lexema,ECX);} NUMBER {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EAX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EDX {$$=localizaSimbolo(lexema,EDX);} EBX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EDX {$$=localizaSimbolo(lexema,EDX);} ECX {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	| MOV EDX {$$=localizaSimbolo(lexema,EDX);} NUMBER {printf("El resultado %d\n",$4);printf("Pos en tabla %d\n",$3);}
+	;
 %%
 void yyerror(char *s){
 	fprintf(stderr,"%s\n",s);
@@ -65,60 +62,20 @@ void yyerror(char *s){
 
 
 int localizaSimbolo(char *nom,int token){
-	int i, longitud;
-    double suma=0.0;
+	int i;
 	for(i=0;i<nSim;i++){
-		if(!strcasecmp(tablaSimbolos[nSim].nombre,nom)){
+		if(!strcmp(tablaSimbolos[nSim].nombre,nom)){/*if(!strcasecmp(tablaSimbolos[nSim].nombre,nom);*/
 				return i;
 		}
 	}
 	strcpy(tablaSimbolos[nSim].nombre,nom);
 	tablaSimbolos[nSim].token=token;
-//Asignacion de valor decimal
-	if(token==NUMERODECIMAL){
-        if(isdigit(lexema[strlen(lexema)-1]))
-		    suma=atof(lexema);
-        else{
-            longitud=strlen(lexema)-2;
-            for(int j=0; j<=longitud; j++){
-                suma=suma+(atof(lexema[j]))*pow(10,(longitud-j));
-            }
-        }
+	if(token==NUMBER){
+		tablaSimbolos[nSim].valor=atof(lexema);
 	}
-//Asignacion de valor hexadecimal
-    if(token==NUMEROHEXADECIMAL){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            if(isdigit(lexema[j])){
-                suma=suma+(atof(lexema[j])*pow(16,(longitud-j)));
-            }
-            if(lexema[j]>='a'&&lexema[j]<='f'){
-                suma=suma+((int)(lexema[j])-87)*pow(16,(longitud-j));
-            }
-            if(lexema[j]>='A' && lexema[j]<='F'){
-                suma=suma+((int)(lexema[j])-55)*pow(16,(longitud-j));
-            }
-        }
-	}
-//Asignacion de valor octal
-    if(token==NUMEROOCTAL){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*pow(8,(longitud-j));
-        }
-	}
-//Asignacion de valor binario
-    if(token==NUMEROBINARIO){
-		longitud=strlen(lexema)-2;
-        for(int j=0; j<=longitud; j++){
-            suma=suma+(atof(lexema[j]))*pow(2,(longitud-j));
-        }
-	}
-//Sin asignacion de valor numerico inicial
 	else{
-		suma=0.0;
+		tablaSimbolos[nSim].valor=0.0;
 	}
-    tablaSimbolos[nSim].valor=suma;
 	nSim++;
 	return nSim-1;
 
@@ -136,154 +93,9 @@ void imprimeTablaSimbolos(){
 
 int yylex(){
 	char c;int i;
-	while((c=getchar())==' ');/*permitirme ignorar blancos*/
-//---------------------------------------
-//REGISTROS 
-	if(c=='E'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='A'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EAX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='B'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EBX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='C'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return ECX;
-			}
-			else ungetc(c,stdin);
-		}
-		else if(c=='D'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='X'){
-				lexema[i]='\0';
-				return EDX;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-//PALABRAS RESERVADAS DE FUNCIONES
-	if(c=='M'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='O'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='V'){
-				lexema[i]='\0';
-				return INC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-	if(c=='I'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='N'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='C'){
-				lexema[i]='\0';
-				return INC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-	if(c=='D'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='E'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='C'){
-				lexema[i]='\0';
-				return DEC;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-
-
-	if(c=='M'){
-		i=0;
-		lexema[i++]=c;
-		c=getchar();
-		if(c=='U'){
-			lexema[i++]=c;
-			c=getchar();
-			if(c=='L'){
-				lexema[i]='\0';
-				return MUL;
-			}
-			else ungetc(c,stdin);
-		}
-		else ungetc(c,stdin);
-	}
-
-
-	if(isdigit(c)){
-		i=0;
-		do{
-			lexema[i++]=c;
-			c=getchar();
-		}while(isalnum(c));
-		ungetc(c,stdin);
-		lexema[i++]='\0';
-//NUMERODECIMAL
-		if(lexema[--i]=='d'||lexema[--i]=='D'||isdigit(lexema[--i])){
-            for(int j=0;j<i;j++){
-                if(!isdigit(lexema[j])) return;
-                else return NUMERODECIMAL;
-            }
-        }
-//NUMEROHEXADECIMAL
-		if(lexema[--i]=='h'||lexema[--i]=='H'){
-            for(int j=0;j<(i-2);j++){
-                if((isdigit(lexema[j])) || (lexema[j]>='a'&&lexema[j]<='f') || (lexema[j]>='A' && lexema[j]<='F')) return NUMEROHEXADECIMAL;
-                else return;
-            }
-        }
-//NUMEROOCTAL
-		if(lexema[--i]=='q'||lexema[--i]=='Q' ||lexema[--i]=='o' ||lexema[--i]=='O'){
-            for(int j=0;j<(i-2);j++){
-                if(lexema[j]>='0' && lexema[j]<='8') return NUMEROOCTAL;
-                else return;
-            }
-        }
-//NUMEROBINARIO
-		if(lexema[--i]=='b'||lexema[--i]=='B'){
-            for(int j=0;j<(i-2);j++){
-                if(lexema[j]=='0' || lexema[j]=='1') return NUMEROBINARIO;
-                else return;
-            }
-        }
-	}
-//----------------------------------------
+	while((c=getchar())==' ');   /*permitirme ignorar blancos*/
+	if (c=='\n') return CAMBIOLINEA;
+	
     if(isalpha(c)){
 		i=0;
 		do{
@@ -292,20 +104,27 @@ int yylex(){
 		}while(isalnum(c));
 		ungetc(c,stdin);
 		lexema[i++]='\0';
-//Meter las palabras reservadas de funciones aca
-        
-		//Instrucciones Paolo Patiño
-		if(strcmp(lexema,"dividir")){
-    		return DIVISION;
-    	}
-    	if(strcmp(lexema,"conjuncion")){
-    		return OR;
-    	}
-    	if(strcmp(lexema,"disyuncion")){
-    		return AND;
-    	}
+		if(!strcmp(lexema,"EAX"))	return EAX;
+		if(!strcmp(lexema,"EBX"))	return EBX;
+		if(!strcmp(lexema,"ECX"))	return ECX;
+		if(!strcmp(lexema,"EDX"))	return EDX;
+		if(!strcmp(lexema,"asignar"))	return MOV;
+       		if(!strcmp(lexema,"incrementar"))	return INC;
+    		if(!strcmp(lexema,"decrementar"))	return DEC;
+		if(!strcmp(lexema,"multiplicar"))	return MUL;
 //---------------------------------------------------
-
+		return ID;
+	}
+	if(isdigit(c)){ 
+		//scanf("%d",&yylval);
+		i=0;
+		do{
+			lexema[i++]=c;
+			c=getchar();
+		}while(isdigit(c));
+		ungetc(c,stdin);
+		lexema[i++]='\0';
+		return NUMBER;
 	}
 	if(c=='\n'){
 		return 0;
@@ -316,12 +135,11 @@ int yylex(){
 int main(){
 	if(!yyparse()){
 		printf("cadena válida\n");
-		imprimeTablaSimbolos();
+		//imprimeTablaSimbolos();
 	}
 	else{
 		printf("cadena inválida\n");	
 	}
 }
-
 
 
